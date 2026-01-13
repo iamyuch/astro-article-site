@@ -1,25 +1,80 @@
 ---
-// 搜索组件 - 仅搜索文章标题
+// 搜索组件
 ---
 
-<div class="w-full md:w-auto">
-  <form onsubmit="return false;" class="flex gap-1">
+<div class="search-wrapper">
+  <form onsubmit="return false;" class="search-form">
     <input 
       type="text" 
       id="searchInput"
       placeholder="搜索文章标题..." 
-      class="border border-gray-400 px-2 py-1 w-64 text-sm focus:outline-none focus:border-black focus:ring-0 rounded-none"
+      class="search-input"
       autocomplete="off"
     >
-    <button type="button" id="searchButton" class="bg-gray-200 border border-gray-400 px-3 py-1 text-sm text-black hover:bg-gray-300 active:bg-gray-400 rounded-none font-medium">
-      搜索
-    </button>
+    <button type="button" id="searchButton" class="search-btn">搜索</button>
   </form>
-  <div id="searchResults" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-gray-400 shadow-lg max-h-[400px] overflow-y-auto z-50"></div>
+  <div id="searchResults" class="search-results"></div>
 </div>
 
 <style>
-  #searchResults.show {
+  .search-wrapper {
+    width: 100%;
+    position: relative;
+  }
+  
+  .search-form {
+    display: flex;
+    gap: 0.25rem;
+  }
+  
+  .search-input {
+    border: 1px solid #999;
+    padding: 0.25rem 0.5rem;
+    width: 16rem;
+    font-size: 0.875rem;
+    font-family: Verdana, Arial, sans-serif;
+  }
+  
+  .search-input:focus {
+    outline: none;
+    border-color: #000;
+  }
+  
+  .search-btn {
+    background: #e5e7eb;
+    border: 1px solid #999;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.875rem;
+    color: #000;
+    cursor: pointer;
+    font-weight: 500;
+    font-family: Verdana, Arial, sans-serif;
+  }
+  
+  .search-btn:hover {
+    background: #d1d5db;
+  }
+  
+  .search-btn:active {
+    background: #9ca3af;
+  }
+  
+  .search-results {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 0.25rem;
+    background: #fff;
+    border: 1px solid #999;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 50;
+  }
+  
+  .search-results.show {
     display: block;
   }
   
@@ -80,13 +135,18 @@
     background: #ffeb3b;
     font-weight: 500;
   }
+  
+  @media (min-width: 769px) {
+    .search-wrapper {
+      width: auto;
+    }
+  }
 </style>
 
 <script>
   if (typeof window !== 'undefined') {
     let articles: any[] = [];
     
-    // 加载所有文章数据
     async function loadArticles() {
       try {
         const response = await fetch('/api/articles.json');
@@ -96,25 +156,20 @@
       }
     }
     
-    // 搜索文章
     function searchArticles(query: string) {
       if (!query.trim()) return [];
-      
       const lowerQuery = query.toLowerCase();
       return articles.filter(article => 
         article.title.toLowerCase().includes(lowerQuery)
       );
     }
     
-    // 高亮匹配文本
     function highlightText(text: string, query: string): string {
       if (!query.trim()) return text;
-      
       const regex = new RegExp(`(${query})`, 'gi');
       return text.replace(regex, '<span class="search-highlight">$1</span>');
     }
     
-    // 渲染搜索结果
     function renderResults(results: any[], query: string) {
       const container = document.getElementById('searchResults');
       if (!container) return;
@@ -141,7 +196,6 @@
       container.classList.add('show');
     }
     
-    // 初始化
     document.addEventListener('DOMContentLoaded', async () => {
       await loadArticles();
       
@@ -151,20 +205,16 @@
       
       if (!searchInput || !searchResults) return;
       
-      // 输入事件
       searchInput.addEventListener('input', (e) => {
         const query = (e.target as HTMLInputElement).value;
-        
         if (!query.trim()) {
           searchResults.classList.remove('show');
           return;
         }
-        
         const results = searchArticles(query);
         renderResults(results, query);
       });
       
-      // 按钮点击事件
       if (searchButton) {
         searchButton.addEventListener('click', () => {
           const query = searchInput.value;
@@ -175,14 +225,12 @@
         });
       }
       
-      // 点击外部关闭
       document.addEventListener('click', (e) => {
         if (!searchInput.contains(e.target as Node) && !searchResults.contains(e.target as Node)) {
           searchResults.classList.remove('show');
         }
       });
       
-      // 点击输入框显示结果
       searchInput.addEventListener('focus', () => {
         if (searchInput.value.trim() && searchResults.children.length > 0) {
           searchResults.classList.add('show');

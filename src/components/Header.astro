@@ -1,55 +1,133 @@
 ---
-const siteName = "WikiFlow"; // 网站名称占位符
+const siteName = "WikiFlow";
 ---
 
-<header class="flex flex-col md:flex-row md:items-end justify-between border-b-2 border-black pb-4 mb-6 gap-4">
+<header>
   <div>
-    <h1 class="text-3xl font-bold tracking-tighter text-black font-sans">
-      <a href="/" class="no-underline hover:none text-black">{siteName}</a>
-    </h1>
+    <h1><a href="/">{siteName}</a></h1>
   </div>
   
   <!-- 移动端导航 -->
-  <nav class="flex md:hidden gap-3 items-center">
-    <a href="/" class="text-sm border border-gray-400 px-3 py-1 hover:bg-gray-100">首页</a>
-    <div class="relative">
-      <button id="tagDropdown" class="text-sm border border-gray-400 px-3 py-1 hover:bg-gray-100">
-        标签 ▼
-      </button>
-      <div id="tagDropdownMenu" class="hidden absolute top-full left-0 mt-1 bg-white border border-gray-400 shadow-lg min-w-[200px] max-h-[300px] overflow-y-auto z-50">
-        <div id="mobileTagsContainer" class="p-2">加载中...</div>
+  <nav class="mobile-nav">
+    <a href="/" class="nav-btn">首页</a>
+    <div class="dropdown">
+      <button id="tagDropdown" class="nav-btn">标签 ▼</button>
+      <div id="tagDropdownMenu" class="dropdown-menu">
+        <div id="mobileTagsContainer">加载中...</div>
       </div>
     </div>
   </nav>
 </header>
 
 <style>
-  header a {
+  header {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-bottom: 2px solid #000;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    gap: 1rem;
+  }
+  
+  h1 {
+    font-size: 1.875rem;
+    font-weight: bold;
+    letter-spacing: -0.025em;
+    font-family: Verdana, Arial, sans-serif;
+  }
+  
+  h1 a {
+    color: #000;
     text-decoration: none;
   }
-  header a:hover {
+  
+  h1 a:hover {
     text-decoration: none;
   }
-  #tagDropdownMenu.show {
+  
+  .mobile-nav {
+    display: none;
+    gap: 0.75rem;
+    align-items: center;
+  }
+  
+  .nav-btn {
+    font-size: 0.875rem;
+    border: 1px solid #999;
+    padding: 0.25rem 0.75rem;
+    background: #fff;
+    cursor: pointer;
+    color: #000;
+  }
+  
+  .nav-btn:hover {
+    background: #f5f5f5;
+    text-decoration: none;
+  }
+  
+  .dropdown {
+    position: relative;
+  }
+  
+  .dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 0.25rem;
+    background: #fff;
+    border: 1px solid #999;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    min-width: 200px;
+    max-height: 300px;
+    overflow-y: auto;
+    z-index: 50;
+  }
+  
+  .dropdown-menu.show {
     display: block;
   }
+  
+  #mobileTagsContainer {
+    padding: 0.5rem;
+  }
+  
   #mobileTagsContainer a {
     display: block;
     padding: 0.5rem;
     border-bottom: 1px solid #eee;
     color: #0000EE;
   }
+  
   #mobileTagsContainer a:hover {
     background: #f5f5f5;
-    text-decoration: underline;
   }
+  
   #mobileTagsContainer a:last-child {
     border-bottom: none;
+  }
+  
+  @media (max-width: 768px) {
+    .mobile-nav {
+      display: flex;
+    }
+    
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+  
+  @media (min-width: 769px) {
+    header {
+      flex-direction: row;
+      align-items: flex-end;
+    }
   }
 </style>
 
 <script>
-  // 移动端下拉菜单
   if (typeof window !== 'undefined') {
     document.addEventListener('DOMContentLoaded', () => {
       const dropdownToggle = document.getElementById('tagDropdown');
@@ -59,13 +137,10 @@ const siteName = "WikiFlow"; // 网站名称占位符
         dropdownToggle.addEventListener('click', (e) => {
           e.stopPropagation();
           dropdownMenu.classList.toggle('show');
-          dropdownMenu.classList.toggle('hidden');
         });
         
-        // 点击外部关闭
         document.addEventListener('click', () => {
           dropdownMenu.classList.remove('show');
-          dropdownMenu.classList.add('hidden');
         });
         
         dropdownMenu.addEventListener('click', (e) => {
@@ -73,7 +148,6 @@ const siteName = "WikiFlow"; // 网站名称占位符
         });
       }
       
-      // 加载标签到移动端下拉菜单
       fetch('/api/tags.json')
         .then(res => res.json())
         .then(tags => {

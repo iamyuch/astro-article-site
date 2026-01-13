@@ -16,7 +16,7 @@ interface Props {
 
 const { 
   title, 
-  description = '网站描述占位符 - 请在 BaseLayout.astro 中修改',
+  description = '网站描述占位符',
   keywords = [],
   type = 'website',
   article
@@ -36,14 +36,35 @@ const {
     article={article}
   />
   <style is:global>
-    /* 还原一些基础 HTML 元素的默认样式感 */
+    /* 重置和基础样式 */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
+      font-family: Verdana, Arial, sans-serif;
       font-size: 15px;
       line-height: 1.5;
+      background: #fff;
+      color: #000;
     }
+    
+    a {
+      color: #0000EE;
+      text-decoration: none;
+    }
+    
+    a:visited {
+      color: #551A8B;
+    }
+    
     a:hover {
+      color: #FF0000;
       text-decoration: underline;
     }
+    
     /* 文章内容样式 */
     .article-content {
       line-height: 1.8;
@@ -105,19 +126,9 @@ const {
       margin-bottom: 1em;
       color: #666;
     }
-    .article-content a {
-      color: #0000EE;
-      text-decoration: underline;
-    }
-    .article-content a:visited {
-      color: #551A8B;
-    }
-    .article-content a:hover {
-      color: #FF0000;
-    }
   </style>
 </head>
-<body class="bg-white text-black min-h-screen">
+<body>
   <slot />
 </body>
 </html>

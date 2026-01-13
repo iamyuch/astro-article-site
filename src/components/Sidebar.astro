@@ -7,15 +7,13 @@ const tags = Array.from(tagMap.entries())
   .sort((a, b) => b.count - a.count);
 ---
 
-<aside class="hidden md:block md:col-span-1 border-l-0 md:border-l border-gray-200 md:pl-6 space-y-8">
+<aside class="sidebar">
   <!-- 标签云 -->
   <div>
-    <h3 class="font-bold border-b-2 border-black mb-3 pb-1 text-sm uppercase tracking-wide">
-      标签
-    </h3>
-    <div class="flex flex-wrap gap-x-3 gap-y-1 text-sm leading-relaxed text-gray-700">
+    <h3 class="sidebar-title">标签</h3>
+    <div class="tag-cloud">
       {tags.map(tag => (
-        <a href={`/tag/${encodeURIComponent(tag.name)}/`} class="text-link hover:text-link-hover hover:underline">
+        <a href={`/tag/${encodeURIComponent(tag.name)}/`}>
           [#{tag.name}]
         </a>
       ))}
@@ -24,34 +22,90 @@ const tags = Array.from(tagMap.entries())
 
   <!-- 友情链接 -->
   <div>
-    <h3 class="font-bold border-b-2 border-black mb-3 pb-1 text-sm uppercase tracking-wide">
-      友情链接
-    </h3>
-    <div class="text-sm flex flex-col gap-1">
-      <p class="text-gray-500 italic">暂无链接</p>
+    <h3 class="sidebar-title">友情链接</h3>
+    <div class="links">
+      <p class="empty-text">暂无链接</p>
     </div>
   </div>
 </aside>
 
 <!-- 移动端友情链接（放在页面底部） -->
-<div class="md:hidden mt-12 pt-6 border-t border-gray-300">
-  <h3 class="font-bold mb-3 text-sm uppercase tracking-wide">
-    友情链接
-  </h3>
-  <div class="text-sm flex flex-col gap-1">
-    <p class="text-gray-500 italic">暂无链接</p>
+<div class="mobile-links">
+  <h3 class="sidebar-title">友情链接</h3>
+  <div class="links">
+    <p class="empty-text">暂无链接</p>
   </div>
 </div>
 
 <style>
-  .text-link {
+  .sidebar {
+    display: none;
+  }
+  
+  .sidebar-title {
+    font-weight: bold;
+    border-bottom: 2px solid #000;
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.25rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .sidebar > div {
+    margin-bottom: 2rem;
+  }
+  
+  .tag-cloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.625;
+    color: #4b5563;
+  }
+  
+  .tag-cloud a {
     color: #0000EE;
   }
-  .text-link:visited {
+  
+  .tag-cloud a:visited {
     color: #551A8B;
   }
-  .text-link-hover,
-  .text-link:hover {
+  
+  .tag-cloud a:hover {
     color: #FF0000;
+    text-decoration: underline;
+  }
+  
+  .links {
+    font-size: 0.875rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  
+  .empty-text {
+    color: #6b7280;
+    font-style: italic;
+  }
+  
+  .mobile-links {
+    display: block;
+    margin-top: 3rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #d1d5db;
+  }
+  
+  @media (min-width: 769px) {
+    .sidebar {
+      display: block;
+      border-left: 1px solid #e5e7eb;
+      padding-left: 1.5rem;
+    }
+    
+    .mobile-links {
+      display: none;
+    }
   }
 </style>

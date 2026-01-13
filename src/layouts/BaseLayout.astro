@@ -2,17 +2,24 @@
 import SEO from '../components/SEO.astro';
 
 interface Props {
-  title: string;
+  title?: string;
   description?: string;
   keywords?: string[];
   type?: 'website' | 'article';
+  article?: {
+    publishedTime?: string;
+    modifiedTime?: string;
+    author?: string;
+    tags?: string[];
+  };
 }
 
 const { 
   title, 
-  description = '网站描述占位符', 
+  description = '网站描述占位符 - 请在 BaseLayout.astro 中修改',
   keywords = [],
-  type = 'website'
+  type = 'website',
+  article
 } = Astro.props;
 ---
 
@@ -21,77 +28,96 @@ const {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
   <SEO 
-    title={title} 
-    description={description} 
+    title={title}
+    description={description}
     keywords={keywords}
     type={type}
+    article={article}
   />
-  
   <style is:global>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
+    /* 还原一些基础 HTML 元素的默认样式感 */
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-      line-height: 1.6;
-      color: #333;
-      background: #fff;
+      font-size: 15px;
+      line-height: 1.5;
     }
-    
-    a {
-      color: #0066cc;
-      text-decoration: none;
-    }
-    
     a:hover {
       text-decoration: underline;
     }
-    
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
+    /* 文章内容样式 */
+    .article-content {
+      line-height: 1.8;
     }
-    
-    .main-layout {
-      display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 30px;
-      margin-top: 20px;
+    .article-content h1 {
+      font-size: 2em;
+      font-weight: bold;
+      margin-top: 1em;
+      margin-bottom: 0.5em;
+      border-bottom: 2px solid #000;
+      padding-bottom: 0.3em;
     }
-    
-    .main-content {
-      border-right: 1px solid #ddd;
-      padding-right: 30px;
+    .article-content h2 {
+      font-size: 1.5em;
+      font-weight: bold;
+      margin-top: 1em;
+      margin-bottom: 0.5em;
+      border-bottom: 1px solid #ccc;
+      padding-bottom: 0.3em;
     }
-    
-    .sidebar {
-      padding-left: 30px;
+    .article-content h3 {
+      font-size: 1.25em;
+      font-weight: bold;
+      margin-top: 0.8em;
+      margin-bottom: 0.4em;
     }
-    
-    /* 移动端样式 */
-    @media (max-width: 768px) {
-      .main-layout {
-        grid-template-columns: 1fr;
-      }
-      
-      .main-content {
-        border-right: none;
-        padding-right: 0;
-      }
-      
-      .sidebar {
-        display: none;
-      }
+    .article-content p {
+      margin-bottom: 1em;
+    }
+    .article-content ul, .article-content ol {
+      margin-left: 2em;
+      margin-bottom: 1em;
+    }
+    .article-content li {
+      margin-bottom: 0.5em;
+    }
+    .article-content code {
+      background: #f5f5f5;
+      padding: 0.2em 0.4em;
+      border-radius: 3px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.9em;
+    }
+    .article-content pre {
+      background: #f5f5f5;
+      padding: 1em;
+      overflow-x: auto;
+      margin-bottom: 1em;
+      border: 1px solid #ccc;
+    }
+    .article-content pre code {
+      background: none;
+      padding: 0;
+    }
+    .article-content blockquote {
+      border-left: 4px solid #ccc;
+      padding-left: 1em;
+      margin-left: 0;
+      margin-bottom: 1em;
+      color: #666;
+    }
+    .article-content a {
+      color: #0000EE;
+      text-decoration: underline;
+    }
+    .article-content a:visited {
+      color: #551A8B;
+    }
+    .article-content a:hover {
+      color: #FF0000;
     }
   </style>
 </head>
-<body>
+<body class="bg-white text-black min-h-screen">
   <slot />
 </body>
 </html>

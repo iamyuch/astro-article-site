@@ -2,53 +2,24 @@
 // 搜索组件 - 仅搜索文章标题
 ---
 
-<div class="search-container">
-  <input 
-    type="text" 
-    id="searchInput" 
-    class="search-input" 
-    placeholder="搜索文章标题..."
-    autocomplete="off"
-  />
-  <div id="searchResults" class="search-results"></div>
+<div class="w-full md:w-auto">
+  <form onsubmit="return false;" class="flex gap-1">
+    <input 
+      type="text" 
+      id="searchInput"
+      placeholder="搜索文章标题..." 
+      class="border border-gray-400 px-2 py-1 w-64 text-sm focus:outline-none focus:border-black focus:ring-0 rounded-none"
+      autocomplete="off"
+    >
+    <button type="button" id="searchButton" class="bg-gray-200 border border-gray-400 px-3 py-1 text-sm text-black hover:bg-gray-300 active:bg-gray-400 rounded-none font-medium">
+      搜索
+    </button>
+  </form>
+  <div id="searchResults" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-gray-400 shadow-lg max-h-[400px] overflow-y-auto z-50"></div>
 </div>
 
 <style>
-  .search-container {
-    position: relative;
-    margin-bottom: 30px;
-  }
-  
-  .search-input {
-    width: 100%;
-    padding: 10px 15px;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    font-size: 14px;
-    outline: none;
-  }
-  
-  .search-input:focus {
-    border-color: #0066cc;
-  }
-  
-  .search-results {
-    display: none;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    margin-top: 5px;
-    background: #fff;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    max-height: 400px;
-    overflow-y: auto;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    z-index: 1000;
-  }
-  
-  .search-results.show {
+  #searchResults.show {
     display: block;
   }
   
@@ -66,12 +37,16 @@
   }
   
   .search-result-item a {
-    color: #333;
+    color: #0000EE;
     display: block;
   }
   
+  .search-result-item a:visited {
+    color: #551A8B;
+  }
+  
   .search-result-item a:hover {
-    text-decoration: none;
+    text-decoration: underline;
   }
   
   .search-result-title {
@@ -91,7 +66,6 @@
     padding: 2px 6px;
     background: #f5f5f5;
     border: 1px solid #ddd;
-    border-radius: 2px;
     color: #666;
   }
   
@@ -173,6 +147,7 @@
       
       const searchInput = document.getElementById('searchInput') as HTMLInputElement;
       const searchResults = document.getElementById('searchResults');
+      const searchButton = document.getElementById('searchButton');
       
       if (!searchInput || !searchResults) return;
       
@@ -188,6 +163,17 @@
         const results = searchArticles(query);
         renderResults(results, query);
       });
+      
+      // 按钮点击事件
+      if (searchButton) {
+        searchButton.addEventListener('click', () => {
+          const query = searchInput.value;
+          if (query.trim()) {
+            const results = searchArticles(query);
+            renderResults(results, query);
+          }
+        });
+      }
       
       // 点击外部关闭
       document.addEventListener('click', (e) => {

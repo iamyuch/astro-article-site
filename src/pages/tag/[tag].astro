@@ -18,140 +18,88 @@ const articles = await getArticlesByTag(tag);
 ---
 
 <BaseLayout title={`标签: ${tag}`} description={`包含标签"${tag}"的所有文章`} keywords={[tag]}>
-  <Header />
-  
-  <div class="container">
-    <div class="main-layout">
-      <main class="main-content">
-        <h1 class="page-title">标签: {tag}</h1>
-        <p class="tag-info">共 {articles.length} 篇文章</p>
-        
-        <Search />
-        
-        <div class="article-list">
-          {articles.map(article => (
-            <article class="article-item">
-              <h2 class="article-title">
-                <a href={article.url}>{article.title}</a>
-              </h2>
-              {article.tags.length > 0 && (
-                <div class="article-tags">
-                  {article.tags.map(t => (
-                    <a href={`/tag/${encodeURIComponent(t)}/`} class="tag" class:list={{ active: t === tag }}>
-                      {t}
-                    </a>
-                  ))}
-                </div>
-              )}
-            </article>
-          ))}
-        </div>
-      </main>
+  <!-- 主容器 -->
+  <div class="max-w-5xl mx-auto px-4 py-6 bg-white min-h-screen border-x border-gray-200 shadow-none">
+    
+    <!-- 头部：Logo 和 搜索 -->
+    <Header />
+    
+    <div class="flex flex-col md:flex-row md:items-end justify-between mb-6">
+      <div class="flex-grow"></div>
+      <Search />
+    </div>
+
+    <!-- 双栏布局：左内容，右侧边栏 -->
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
       
+      <!-- 主内容区 (占3份) -->
+      <main class="md:col-span-3">
+        
+        <!-- 标签标题 -->
+        <div class="mb-6">
+          <h1 class="text-2xl font-bold border-b-2 border-black pb-2 mb-2">标签: {tag}</h1>
+          <p class="text-sm text-gray-600">共 {articles.length} 篇文章</p>
+        </div>
+        
+        <!-- 列表区块 -->
+        <div class="mb-8">
+          <!-- 列表容器 -->
+          <ul class="space-y-0 text-base">
+            {articles.map(article => (
+              <li class="group py-2 border-b border-dotted border-gray-300 flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4 hover:bg-gray-50 transition-colors">
+                <div class="flex-grow">
+                  <a href={article.url} class="text-link hover:text-link-hover font-medium visited:text-link-visited text-lg">
+                    {article.title}
+                  </a>
+                </div>
+                {article.tags.length > 0 && (
+                  <div class="flex gap-1 flex-wrap">
+                    {article.tags.map(t => (
+                      <a 
+                        href={`/tag/${encodeURIComponent(t)}/`} 
+                        class={`text-xs text-gray-500 hover:text-gray-800 bg-gray-100 px-1 border border-gray-200 rounded-none whitespace-nowrap ${t === tag ? 'bg-gray-300 font-bold' : ''}`}
+                      >
+                        #{t}
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+      </main>
+
+      <!-- 侧边栏 (占1份) -->
       <Sidebar />
     </div>
+
+    <!-- 极简 Footer -->
+    <footer class="mt-12 pt-6 border-t border-gray-300 text-center text-xs text-gray-500">
+      <p class="mb-2">
+        &copy; 2026 WikiFlow. Powered by <a href="https://astro.build" class="text-gray-600 underline">Astro</a>.
+      </p>
+      <p>
+        <a href="#" class="hover:text-black hover:underline mr-2">关于</a>
+        <a href="#" class="hover:text-black hover:underline mr-2">隐私政策</a>
+        <a href="#" class="hover:text-black hover:underline">联系方式</a>
+      </p>
+    </footer>
   </div>
-  
-  <!-- 移动端友情链接 -->
-  <footer class="mobile-footer">
-    <div class="container">
-      <section class="footer-section">
-        <h3>友情链接</h3>
-        <p class="empty-text">暂无链接</p>
-      </section>
-    </div>
-  </footer>
 </BaseLayout>
 
 <style>
-  .page-title {
-    font-size: 28px;
-    margin-bottom: 10px;
-    padding-bottom: 15px;
-    border-bottom: 2px solid #333;
+  .text-link {
+    color: #0000EE;
   }
-  
-  .tag-info {
-    color: #666;
-    font-size: 14px;
-    margin-bottom: 30px;
+  .text-link:visited,
+  .visited\:text-link-visited:visited {
+    color: #551A8B;
   }
-  
-  .article-list {
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .article-item {
-    padding: 20px 0;
-    border-bottom: 1px solid #ddd;
-  }
-  
-  .article-item:last-child {
-    border-bottom: none;
-  }
-  
-  .article-title {
-    font-size: 20px;
-    margin-bottom: 10px;
-  }
-  
-  .article-title a {
-    color: #333;
-  }
-  
-  .article-title a:hover {
-    color: #0066cc;
-  }
-  
-  .article-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  
-  .tag {
-    display: inline-block;
-    padding: 3px 10px;
-    background: #f5f5f5;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    font-size: 13px;
-    color: #666;
-  }
-  
-  .tag:hover {
-    background: #e8e8e8;
-    text-decoration: none;
-  }
-  
-  .tag.active {
-    background: #0066cc;
-    color: #fff;
-    border-color: #0066cc;
-  }
-  
-  .mobile-footer {
-    display: none;
-  }
-  
-  @media (max-width: 768px) {
-    .mobile-footer {
-      display: block;
-      margin-top: 40px;
-      padding: 20px 0;
-      border-top: 2px solid #333;
-    }
-    
-    .footer-section h3 {
-      font-size: 18px;
-      margin-bottom: 10px;
-    }
-    
-    .empty-text {
-      color: #999;
-      font-style: italic;
-      font-size: 14px;
-    }
+  .text-link-hover,
+  .text-link:hover,
+  .hover\:text-link-hover:hover {
+    color: #FF0000;
   }
 </style>

@@ -1,113 +1,50 @@
 ---
-const siteName = '网站名称占位符';
+const siteName = "WikiFlow"; // 网站名称占位符
 ---
 
-<header class="site-header">
-  <div class="container">
-    <h1 class="site-title">
-      <a href="/">{siteName}</a>
+<header class="flex flex-col md:flex-row md:items-end justify-between border-b-2 border-black pb-4 mb-6 gap-4">
+  <div>
+    <h1 class="text-3xl font-bold tracking-tighter text-black font-sans">
+      <a href="/" class="no-underline hover:none text-black">{siteName}</a>
     </h1>
-    
-    <!-- 移动端导航 -->
-    <nav class="mobile-nav">
-      <a href="/" class="nav-link">首页</a>
-      <div class="dropdown">
-        <button class="dropdown-toggle" id="tagDropdown">标签 ▼</button>
-        <div class="dropdown-menu" id="tagDropdownMenu">
-          <div id="mobileTagsContainer">加载中...</div>
-        </div>
-      </div>
-    </nav>
   </div>
+  
+  <!-- 移动端导航 -->
+  <nav class="flex md:hidden gap-3 items-center">
+    <a href="/" class="text-sm border border-gray-400 px-3 py-1 hover:bg-gray-100">首页</a>
+    <div class="relative">
+      <button id="tagDropdown" class="text-sm border border-gray-400 px-3 py-1 hover:bg-gray-100">
+        标签 ▼
+      </button>
+      <div id="tagDropdownMenu" class="hidden absolute top-full left-0 mt-1 bg-white border border-gray-400 shadow-lg min-w-[200px] max-h-[300px] overflow-y-auto z-50">
+        <div id="mobileTagsContainer" class="p-2">加载中...</div>
+      </div>
+    </div>
+  </nav>
 </header>
 
 <style>
-  .site-header {
-    border-bottom: 2px solid #333;
-    padding: 15px 0;
-    background: #fff;
-  }
-  
-  .site-title {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 10px;
-  }
-  
-  .site-title a {
-    color: #333;
+  header a {
     text-decoration: none;
   }
-  
-  .site-title a:hover {
-    color: #0066cc;
+  header a:hover {
+    text-decoration: none;
   }
-  
-  .mobile-nav {
-    display: none;
+  #tagDropdownMenu.show {
+    display: block;
   }
-  
-  /* 移动端样式 */
-  @media (max-width: 768px) {
-    .mobile-nav {
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid #ddd;
-    }
-    
-    .nav-link {
-      padding: 5px 10px;
-      border: 1px solid #ddd;
-      border-radius: 3px;
-      font-size: 14px;
-    }
-    
-    .dropdown {
-      position: relative;
-    }
-    
-    .dropdown-toggle {
-      padding: 5px 10px;
-      border: 1px solid #ddd;
-      border-radius: 3px;
-      background: #fff;
-      cursor: pointer;
-      font-size: 14px;
-    }
-    
-    .dropdown-menu {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 0;
-      margin-top: 5px;
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 3px;
-      padding: 10px;
-      min-width: 200px;
-      max-height: 300px;
-      overflow-y: auto;
-      z-index: 1000;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-    }
-    
-    .dropdown-menu.show {
-      display: block;
-    }
-    
-    #mobileTagsContainer a {
-      display: block;
-      padding: 5px 0;
-      border-bottom: 1px solid #eee;
-    }
-    
-    #mobileTagsContainer a:last-child {
-      border-bottom: none;
-    }
+  #mobileTagsContainer a {
+    display: block;
+    padding: 0.5rem;
+    border-bottom: 1px solid #eee;
+    color: #0000EE;
+  }
+  #mobileTagsContainer a:hover {
+    background: #f5f5f5;
+    text-decoration: underline;
+  }
+  #mobileTagsContainer a:last-child {
+    border-bottom: none;
   }
 </style>
 
@@ -122,11 +59,13 @@ const siteName = '网站名称占位符';
         dropdownToggle.addEventListener('click', (e) => {
           e.stopPropagation();
           dropdownMenu.classList.toggle('show');
+          dropdownMenu.classList.toggle('hidden');
         });
         
         // 点击外部关闭
         document.addEventListener('click', () => {
           dropdownMenu.classList.remove('show');
+          dropdownMenu.classList.add('hidden');
         });
         
         dropdownMenu.addEventListener('click', (e) => {

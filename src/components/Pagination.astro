@@ -40,97 +40,39 @@ const pageNumbers = generatePageNumbers(currentPage, totalPages);
 ---
 
 {totalPages > 1 && (
-  <nav class="pagination">
-    {currentPage > 1 && (
-      <a href={currentPage === 2 ? baseUrl : `${baseUrl}${currentPage - 1}/`} class="page-link prev">
-        ← 上一页
-      </a>
-    )}
+  <div class="mt-8 pt-4 border-t border-gray-300 flex gap-2 text-sm font-sans">
+    <span class="font-bold">分页:</span>
     
-    <div class="page-numbers">
-      {pageNumbers.map(page => (
-        typeof page === 'number' ? (
-          page === currentPage ? (
-            <span class="page-link current">{page}</span>
-          ) : (
-            <a href={page === 1 ? baseUrl : `${baseUrl}${page}/`} class="page-link">
-              {page}
-            </a>
-          )
+    {pageNumbers.map(page => (
+      typeof page === 'number' ? (
+        page === currentPage ? (
+          <span class="font-bold text-black border border-black px-2">{page}</span>
         ) : (
-          <span class="page-link ellipsis">{page}</span>
+          <a href={page === 1 ? baseUrl : `${baseUrl}${page}/`} class="text-link hover:underline hover:bg-gray-100 border border-transparent px-2">
+            {page}
+          </a>
         )
-      ))}
-    </div>
+      ) : (
+        <span>{page}</span>
+      )
+    ))}
     
     {currentPage < totalPages && (
-      <a href={`${baseUrl}${currentPage + 1}/`} class="page-link next">
-        下一页 →
+      <a href={`${baseUrl}${currentPage + 1}/`} class="text-link hover:underline hover:bg-gray-100 border border-transparent px-2">
+        Next &raquo;
       </a>
     )}
-  </nav>
+  </div>
 )}
 
 <style>
-  .pagination {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    margin: 40px 0;
-    padding: 20px 0;
-    border-top: 1px solid #ddd;
+  .text-link {
+    color: #0000EE;
   }
-  
-  .page-numbers {
-    display: flex;
-    gap: 5px;
+  .text-link:visited {
+    color: #551A8B;
   }
-  
-  .page-link {
-    display: inline-block;
-    padding: 8px 12px;
-    border: 1px solid #ddd;
-    border-radius: 3px;
-    color: #0066cc;
-    font-size: 14px;
-    transition: all 0.2s;
-  }
-  
-  .page-link:hover {
-    background: #f5f5f5;
-    text-decoration: none;
-  }
-  
-  .page-link.current {
-    background: #0066cc;
-    color: #fff;
-    border-color: #0066cc;
-    cursor: default;
-  }
-  
-  .page-link.ellipsis {
-    border: none;
-    cursor: default;
-    color: #999;
-  }
-  
-  .page-link.ellipsis:hover {
-    background: transparent;
-  }
-  
-  .prev, .next {
-    font-weight: 500;
-  }
-  
-  @media (max-width: 768px) {
-    .pagination {
-      flex-wrap: wrap;
-    }
-    
-    .page-link {
-      padding: 6px 10px;
-      font-size: 13px;
-    }
+  .text-link:hover {
+    color: #FF0000;
   }
 </style>

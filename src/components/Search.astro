@@ -1,0 +1,207 @@
+---
+// 搜索组件 - 仅搜索文章标题
+---
+
+<div class="search-container">
+  <input 
+    type="text" 
+    id="searchInput" 
+    class="search-input" 
+    placeholder="搜索文章标题..."
+    autocomplete="off"
+  />
+  <div id="searchResults" class="search-results"></div>
+</div>
+
+<style>
+  .search-container {
+    position: relative;
+    margin-bottom: 30px;
+  }
+  
+  .search-input {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 14px;
+    outline: none;
+  }
+  
+  .search-input:focus {
+    border-color: #0066cc;
+  }
+  
+  .search-results {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    max-height: 400px;
+    overflow-y: auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    z-index: 1000;
+  }
+  
+  .search-results.show {
+    display: block;
+  }
+  
+  .search-result-item {
+    padding: 12px 15px;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .search-result-item:last-child {
+    border-bottom: none;
+  }
+  
+  .search-result-item:hover {
+    background: #f5f5f5;
+  }
+  
+  .search-result-item a {
+    color: #333;
+    display: block;
+  }
+  
+  .search-result-item a:hover {
+    text-decoration: none;
+  }
+  
+  .search-result-title {
+    font-size: 16px;
+    font-weight: 500;
+    margin-bottom: 5px;
+  }
+  
+  .search-result-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  
+  .search-result-tag {
+    font-size: 12px;
+    padding: 2px 6px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 2px;
+    color: #666;
+  }
+  
+  .search-no-results {
+    padding: 15px;
+    text-align: center;
+    color: #999;
+    font-size: 14px;
+  }
+  
+  .search-highlight {
+    background: #ffeb3b;
+    font-weight: 500;
+  }
+</style>
+
+<script>
+  if (typeof window !== 'undefined') {
+    let articles: any[] = [];
+    
+    // 加载所有文章数据
+    async function loadArticles() {
+      try {
+        const response = await fetch('/api/articles.json');
+        articles = await response.json();
+      } catch (error) {
+        console.error('加载文章失败:', error);
+      }
+    }
+    
+    // 搜索文章
+    function searchArticles(query: string) {
+      if (!query.trim()) return [];
+      
+      const lowerQuery = query.toLowerCase();
+      return articles.filter(article => 
+        article.title.toLowerCase().includes(lowerQuery)
+      );
+    }
+    
+    // 高亮匹配文本
+    function highlightText(text: string, query: string): string {
+      if (!query.trim()) return text;
+      
+      const regex = new RegExp(`(${query})`, 'gi');
+      return text.replace(regex, '<span class="search-highlight">$1</span>');
+    }
+    
+    // 渲染搜索结果
+    function renderResults(results: any[], query: string) {
+      const container = document.getElementById('searchResults');
+      if (!container) return;
+      
+      if (results.length === 0) {
+        container.innerHTML = '<div class="search-no-results">未找到匹配的文章</div>';
+        container.classList.add('show');
+        return;
+      }
+      
+      container.innerHTML = results.map(article => `
+        <div class="search-result-item">
+          <a href="${article.url}">
+            <div class="search-result-title">${highlightText(article.title, query)}</div>
+            ${article.tags.length > 0 ? `
+              <div class="search-result-tags">
+                ${article.tags.map((tag: string) => `<span class="search-result-tag">${tag}</span>`).join('')}
+              </div>
+            ` : ''}
+          </a>
+        </div>
+      `).join('');
+      
+      container.classList.add('show');
+    }
+    
+    // 初始化
+    document.addEventListener('DOMContentLoaded', async () => {
+      await loadArticles();
+      
+      const searchInput = document.getElementById('searchInput') as HTMLInputElement;
+      const searchResults = document.getElementById('searchResults');
+      
+      if (!searchInput || !searchResults) return;
+      
+      // 输入事件
+      searchInput.addEventListener('input', (e) => {
+        const query = (e.target as HTMLInputElement).value;
+        
+        if (!query.trim()) {
+          searchResults.classList.remove('show');
+          return;
+        }
+        
+        const results = searchArticles(query);
+        renderResults(results, query);
+      });
+      
+      // 点击外部关闭
+      document.addEventListener('click', (e) => {
+        if (!searchInput.contains(e.target as Node) && !searchResults.contains(e.target as Node)) {
+          searchResults.classList.remove('show');
+        }
+      });
+      
+      // 点击输入框显示结果
+      searchInput.addEventListener('focus', () => {
+        if (searchInput.value.trim() && searchResults.children.length > 0) {
+          searchResults.classList.add('show');
+        }
+      });
+    });
+  }
+</script>

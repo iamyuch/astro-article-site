@@ -1,0 +1,154 @@
+---
+const siteName = '网站名称占位符';
+---
+
+<header class="site-header">
+  <div class="container">
+    <h1 class="site-title">
+      <a href="/">{siteName}</a>
+    </h1>
+    
+    <!-- 移动端导航 -->
+    <nav class="mobile-nav">
+      <a href="/" class="nav-link">首页</a>
+      <div class="dropdown">
+        <button class="dropdown-toggle" id="tagDropdown">标签 ▼</button>
+        <div class="dropdown-menu" id="tagDropdownMenu">
+          <div id="mobileTagsContainer">加载中...</div>
+        </div>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    border-bottom: 2px solid #333;
+    padding: 15px 0;
+    background: #fff;
+  }
+  
+  .site-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .site-title a {
+    color: #333;
+    text-decoration: none;
+  }
+  
+  .site-title a:hover {
+    color: #0066cc;
+  }
+  
+  .mobile-nav {
+    display: none;
+  }
+  
+  /* 移动端样式 */
+  @media (max-width: 768px) {
+    .mobile-nav {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid #ddd;
+    }
+    
+    .nav-link {
+      padding: 5px 10px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      font-size: 14px;
+    }
+    
+    .dropdown {
+      position: relative;
+    }
+    
+    .dropdown-toggle {
+      padding: 5px 10px;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      margin-top: 5px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 3px;
+      padding: 10px;
+      min-width: 200px;
+      max-height: 300px;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    
+    .dropdown-menu.show {
+      display: block;
+    }
+    
+    #mobileTagsContainer a {
+      display: block;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    #mobileTagsContainer a:last-child {
+      border-bottom: none;
+    }
+  }
+</style>
+
+<script>
+  // 移动端下拉菜单
+  if (typeof window !== 'undefined') {
+    document.addEventListener('DOMContentLoaded', () => {
+      const dropdownToggle = document.getElementById('tagDropdown');
+      const dropdownMenu = document.getElementById('tagDropdownMenu');
+      
+      if (dropdownToggle && dropdownMenu) {
+        dropdownToggle.addEventListener('click', (e) => {
+          e.stopPropagation();
+          dropdownMenu.classList.toggle('show');
+        });
+        
+        // 点击外部关闭
+        document.addEventListener('click', () => {
+          dropdownMenu.classList.remove('show');
+        });
+        
+        dropdownMenu.addEventListener('click', (e) => {
+          e.stopPropagation();
+        });
+      }
+      
+      // 加载标签到移动端下拉菜单
+      fetch('/api/tags.json')
+        .then(res => res.json())
+        .then(tags => {
+          const container = document.getElementById('mobileTagsContainer');
+          if (container) {
+            container.innerHTML = tags.map((tag: { name: string; count: number }) => 
+              `<a href="/tag/${encodeURIComponent(tag.name)}/">${tag.name} (${tag.count})</a>`
+            ).join('');
+          }
+        })
+        .catch(() => {
+          const container = document.getElementById('mobileTagsContainer');
+          if (container) container.innerHTML = '加载失败';
+        });
+    });
+  }
+</script>

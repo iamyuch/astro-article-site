@@ -1,0 +1,76 @@
+---
+interface BreadcrumbItem {
+  label: string;
+  url?: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav class="breadcrumb" aria-label="面包屑导航">
+  <ol class="breadcrumb-list">
+    {items.map((item, index) => (
+      <li class="breadcrumb-item">
+        {item.url ? (
+          <a href={item.url}>{item.label}</a>
+        ) : (
+          <span class="current">{item.label}</span>
+        )}
+        {index < items.length - 1 && <span class="separator">/</span>}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumb {
+    padding: 15px 0;
+    border-bottom: 1px solid #ddd;
+    margin-bottom: 20px;
+  }
+  
+  .breadcrumb-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    list-style: none;
+    gap: 8px;
+  }
+  
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+  }
+  
+  .breadcrumb-item a {
+    color: #0066cc;
+  }
+  
+  .breadcrumb-item a:hover {
+    text-decoration: underline;
+  }
+  
+  .breadcrumb-item .current {
+    color: #666;
+  }
+  
+  .separator {
+    color: #999;
+  }
+  
+  @media (max-width: 768px) {
+    .breadcrumb {
+      padding: 10px 0;
+    }
+    
+    .breadcrumb-item {
+      font-size: 13px;
+    }
+  }
+</style>

@@ -1,0 +1,249 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import { getAllArticles, getArticleBySlug } from '../../utils/articles';
+
+export async function getStaticPaths() {
+  const articles = await getAllArticles();
+  
+  return articles.map(article => ({
+    params: { slug: article.slug },
+  }));
+}
+
+const { slug } = Astro.params;
+const article = await getArticleBySlug(slug);
+
+if (!article) {
+  return Astro.redirect('/404');
+}
+
+const breadcrumbItems = [
+  { label: '首页', url: '/' },
+  { label: article.title }
+];
+---
+
+<BaseLayout 
+  title={article.title} 
+  description={article.description} 
+  keywords={article.keywords}
+  type="article"
+>
+  <Header />
+  
+  <div class="container">
+    <Breadcrumb items={breadcrumbItems} />
+    
+    <div class="main-layout">
+      <main class="main-content">
+        <article class="article">
+          <header class="article-header">
+            <h1 class="article-title">{article.title}</h1>
+            
+            {article.tags.length > 0 && (
+              <div class="article-tags">
+                {article.tags.map(tag => (
+                  <a href={`/tag/${encodeURIComponent(tag)}/`} class="tag">
+                    {tag}
+                  </a>
+                ))}
+              </div>
+            )}
+          </header>
+          
+          <div class="article-content" set:html={article.content} />
+        </article>
+      </main>
+      
+      <Sidebar />
+    </div>
+  </div>
+  
+  <!-- 移动端友情链接 -->
+  <footer class="mobile-footer">
+    <div class="container">
+      <section class="footer-section">
+        <h3>友情链接</h3>
+        <p class="empty-text">暂无链接</p>
+      </section>
+    </div>
+  </footer>
+</BaseLayout>
+
+<style>
+  .article {
+    padding: 20px 0;
+  }
+  
+  .article-header {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #333;
+  }
+  
+  .article-title {
+    font-size: 32px;
+    margin-bottom: 15px;
+    line-height: 1.3;
+  }
+  
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .tag:hover {
+    background: #e8e8e8;
+    text-decoration: none;
+  }
+  
+  .article-content {
+    line-height: 1.8;
+    font-size: 16px;
+  }
+  
+  .article-content :global(h2) {
+    font-size: 24px;
+    margin-top: 30px;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .article-content :global(h3) {
+    font-size: 20px;
+    margin-top: 25px;
+    margin-bottom: 12px;
+  }
+  
+  .article-content :global(h4) {
+    font-size: 18px;
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .article-content :global(p) {
+    margin-bottom: 15px;
+  }
+  
+  .article-content :global(ul),
+  .article-content :global(ol) {
+    margin-bottom: 15px;
+    padding-left: 30px;
+  }
+  
+  .article-content :global(li) {
+    margin-bottom: 8px;
+  }
+  
+  .article-content :global(blockquote) {
+    margin: 20px 0;
+    padding: 15px 20px;
+    border-left: 4px solid #0066cc;
+    background: #f5f5f5;
+    color: #666;
+  }
+  
+  .article-content :global(code) {
+    padding: 2px 6px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+  }
+  
+  .article-content :global(pre) {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    overflow-x: auto;
+  }
+  
+  .article-content :global(pre code) {
+    padding: 0;
+    background: transparent;
+    border: none;
+  }
+  
+  .article-content :global(img) {
+    max-width: 100%;
+    height: auto;
+    margin: 20px 0;
+    border: 1px solid #ddd;
+  }
+  
+  .article-content :global(table) {
+    width: 100%;
+    margin: 20px 0;
+    border-collapse: collapse;
+  }
+  
+  .article-content :global(th),
+  .article-content :global(td) {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+  
+  .article-content :global(th) {
+    background: #f5f5f5;
+    font-weight: bold;
+  }
+  
+  .mobile-footer {
+    display: none;
+  }
+  
+  @media (max-width: 768px) {
+    .article-title {
+      font-size: 24px;
+    }
+    
+    .article-content {
+      font-size: 15px;
+    }
+    
+    .article-content :global(h2) {
+      font-size: 20px;
+    }
+    
+    .article-content :global(h3) {
+      font-size: 18px;
+    }
+    
+    .mobile-footer {
+      display: block;
+      margin-top: 40px;
+      padding: 20px 0;
+      border-top: 2px solid #333;
+    }
+    
+    .footer-section h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    
+    .empty-text {
+      color: #999;
+      font-style: italic;
+      font-size: 14px;
+    }
+  }
+</style>

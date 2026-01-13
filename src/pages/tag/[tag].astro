@@ -1,0 +1,157 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/Header.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import Search from '../../components/Search.astro';
+import { getAllTags, getArticlesByTag } from '../../utils/articles';
+
+export async function getStaticPaths() {
+  const tagMap = await getAllTags();
+  
+  return Array.from(tagMap.keys()).map(tag => ({
+    params: { tag },
+  }));
+}
+
+const { tag } = Astro.params;
+const articles = await getArticlesByTag(tag);
+---
+
+<BaseLayout title={`标签: ${tag}`} description={`包含标签"${tag}"的所有文章`} keywords={[tag]}>
+  <Header />
+  
+  <div class="container">
+    <div class="main-layout">
+      <main class="main-content">
+        <h1 class="page-title">标签: {tag}</h1>
+        <p class="tag-info">共 {articles.length} 篇文章</p>
+        
+        <Search />
+        
+        <div class="article-list">
+          {articles.map(article => (
+            <article class="article-item">
+              <h2 class="article-title">
+                <a href={article.url}>{article.title}</a>
+              </h2>
+              {article.tags.length > 0 && (
+                <div class="article-tags">
+                  {article.tags.map(t => (
+                    <a href={`/tag/${encodeURIComponent(t)}/`} class="tag" class:list={{ active: t === tag }}>
+                      {t}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </main>
+      
+      <Sidebar />
+    </div>
+  </div>
+  
+  <!-- 移动端友情链接 -->
+  <footer class="mobile-footer">
+    <div class="container">
+      <section class="footer-section">
+        <h3>友情链接</h3>
+        <p class="empty-text">暂无链接</p>
+      </section>
+    </div>
+  </footer>
+</BaseLayout>
+
+<style>
+  .page-title {
+    font-size: 28px;
+    margin-bottom: 10px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #333;
+  }
+  
+  .tag-info {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 30px;
+  }
+  
+  .article-list {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .article-item {
+    padding: 20px 0;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .article-item:last-child {
+    border-bottom: none;
+  }
+  
+  .article-title {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  
+  .article-title a {
+    color: #333;
+  }
+  
+  .article-title a:hover {
+    color: #0066cc;
+  }
+  
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    background: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    font-size: 13px;
+    color: #666;
+  }
+  
+  .tag:hover {
+    background: #e8e8e8;
+    text-decoration: none;
+  }
+  
+  .tag.active {
+    background: #0066cc;
+    color: #fff;
+    border-color: #0066cc;
+  }
+  
+  .mobile-footer {
+    display: none;
+  }
+  
+  @media (max-width: 768px) {
+    .mobile-footer {
+      display: block;
+      margin-top: 40px;
+      padding: 20px 0;
+      border-top: 2px solid #333;
+    }
+    
+    .footer-section h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    
+    .empty-text {
+      color: #999;
+      font-style: italic;
+      font-size: 14px;
+    }
+  }
+</style>
